@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>俊俊的高一数理化学习进度地图</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #64708a;
+      --line: #dce3ee;
+      --paper: #f5f7fb;
+      --card: #ffffff;
+      --blue: #3568d4;
+      --blue-soft: #eaf0ff;
+      --green: #16815f;
+      --green-soft: #e5f6ef;
+      --amber: #b36b00;
+      --amber-soft: #fff3d9;
+      --red: #b53b4d;
+      --red-soft: #fdebed;
+      --purple: #7552c7;
+      --purple-soft: #f0eaff;
+      --gray-soft: #eef1f5;
+      --shadow: 0 12px 35px rgba(28, 45, 80, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 24px auto 56px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border-radius: 24px;
+      background: linear-gradient(125deg, #1d3f8f 0%, #3568d4 55%, #6a55c9 100%);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -90px;
+      top: -120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+    }
+    .hero h1 { margin: 0 0 6px; font-size: clamp(26px, 4vw, 42px); line-height: 1.2; }
+    .hero p { margin: 0; max-width: 780px; color: rgba(255,255,255,.88); }
+    .hero .date { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,.72); }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .metric, .panel, .subject-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .metric { border-radius: 18px; padding: 18px; }
+    .metric .value { font-size: 30px; font-weight: 800; line-height: 1.1; }
+    .metric .label { margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .metric .hint { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .section-title { margin: 30px 0 12px; font-size: 23px; }
+    .section-sub { margin: -6px 0 14px; color: var(--muted); font-size: 14px; }
+    .subject-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .subject-card { border-radius: 20px; padding: 20px; }
+    .subject-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .subject-name { font-size: 22px; font-weight: 800; }
+    .subject-score { font-size: 13px; color: var(--muted); text-align: right; }
+    .bar { height: 11px; background: var(--gray-soft); border-radius: 999px; overflow: hidden; margin: 14px 0 6px; }
+    .bar > span { display: block; height: 100%; border-radius: inherit; }
+    .bar-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .focus { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 13px; }
+    .focus strong { display: block; margin-bottom: 4px; }
+    .notice {
+      margin-top: 14px;
+      border-left: 5px solid var(--blue);
+      background: var(--blue-soft);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #29416e;
+      font-size: 14px;
+    }
+    .panel { border-radius: 20px; padding: 20px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .filters button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      padding: 8px 13px;
+      border-radius: 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .filters button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue); color: white; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 16px; color: var(--muted); font-size: 12px; }
+    .dot { width: 10px; height: 10px; display: inline-block; border-radius: 50%; margin-right: 5px; }
+    .subject-block + .subject-block { margin-top: 24px; }
+    .subject-block h3 { margin: 0 0 10px; }
+    .node-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }
+    .node {
+      min-height: 100px;
+      padding: 11px;
+      border-radius: 13px;
+      border: 1px solid transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .node .code { font-size: 12px; font-weight: 800; opacity: .72; }
+    .node .title { font-size: 13px; font-weight: 700; line-height: 1.4; margin: 4px 0 8px; }
+    .node .state { font-size: 11px; line-height: 1.35; }
+    .mastered { background: var(--green-soft); border-color: #bce4d4; color: #0d674b; }
+    .developing { background: var(--amber-soft); border-color: #f1dba8; color: #81520b; }
+    .weak { background: var(--red-soft); border-color: #f1c5cb; color: #8f2e3e; }
+    .planned { background: var(--purple-soft); border-color: #d7c8fa; color: #5a3da2; }
+    .not-started { background: var(--gray-soft); border-color: #dde2e9; color: #667085; }
+    .timeline-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
+    table { width: 100%; border-collapse: collapse; background: white; min-width: 900px; }
+    th, td { padding: 12px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 13px; }
+    th { position: sticky; top: 0; background: #edf2fb; color: #34425e; z-index: 1; }
+    tr:last-child td { border-bottom: 0; }
+    tr.future td:first-child { color: var(--purple); font-weight: 800; }
+    tr.past td:first-child { color: var(--blue); font-weight: 800; }
+    .tag { display: inline-block; margin: 1px 3px 1px 0; padding: 2px 6px; border-radius: 6px; background: #eef2f8; }
+    .footer { margin: 22px 4px 0; color: var(--muted); font-size: 12px; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .subject-grid { grid-template-columns: 1fr; }
+      .node-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .page { width: min(100% - 16px, 1180px); margin-top: 8px; }
+      .hero { padding: 22px 18px; border-radius: 18px; }
+      .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .metric { padding: 14px; }
+      .metric .value { font-size: 25px; }
+      .panel { padding: 14px; }
+      .node-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+      .node { min-height: 94px; }
+    }
+    @media print {
+      body { background: white; }
+      .page { width: 100%; margin: 0; }
+      .hero, .metric, .panel, .subject-card { box-shadow: none; }
+      .filters { display: none; }
+      .node-grid { grid-template-columns: repeat(5, 1fr); }
+      .timeline-wrap { overflow: visible; }
+      table { min-width: 0; }
+      th { position: static; }
+      .page-break { break-before: page; }
+    }
+  </style>
+<meta property="og:title" content="俊俊的高一数理化学习进度地图">
+<meta property="og:description" content="你已经把高一数理化主线推进了一半左右。这里既展示学到哪里，也标出哪些内容已经比较">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/willdo9/caomutang-pages@main/junjun_-og.jpg">
+<meta property="og:type" content="website">
+<meta name="description" content="你已经把高一数理化主线推进了一半左右。这里既展示学到哪里，也标出哪些内容已经比较">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>俊俊的高一数理化学习进度地图</h1>
+      <p>你已经把高一数理化主线推进了一半左右。这里既展示学到哪里，也标出哪些内容已经比较稳定、哪些需要再讲一次。</p>
+      <div class="date">依据 D1—D15 日包、完整对话与学习反馈整理｜更新于 2026-08-11</div>
+    </section>
+
+    <section class="metrics" aria-label="总体进度">
+      <article class="metric"><div class="value">108</div><div class="label">数理化总知识点</div><div class="hint">数学43＋物理31＋化学34</div></article>
+      <article class="metric"><div class="value">56</div><div class="label">已有学习记录</div><div class="hint">不把D15未学的M24/M25算进去</div></article>
+      <article class="metric"><div class="value">52%</div><div class="label">主线学习覆盖</div><div class="hint">表示接触过，不等于全部掌握</div></article>
+      <article class="metric"><div class="value">约62%</div><div class="label">已学内容掌握估计</div><div class="hint">不是考试分数，会随复测更新</div></article>
+    </section>
+
+    <div class="notice"><strong>怎么看：</strong>“覆盖率”回答学到哪里；“掌握估计”回答已经学过的内容目前有多稳。折算到全部108个基础知识点，目前约完成了三分之一的“学习＋初步掌握”。</div>
+
+    <h2 class="section-title">三科进度</h2>
+    <p class="section-sub">百分比来自现有对话、首答、提示后纠正、重复错误和最近反馈的综合估计。</p>
+    <section class="subject-grid">
+      <article class="subject-card">
+        <div class="subject-head"><div class="subject-name">数学</div><div class="subject-score">已学 21 / 43<br>掌握估计约 58%</div></div>
+        <div class="bar"><span style="width:48.8%;background:#3568d4"></span></div>
+        <div class="bar-label"><span>覆盖 49%</span><span>还剩 22 个</span></div>
+        <div class="focus"><strong>当前优先补强</strong>二次不等式方向；0&lt;a&lt;1单调性；负指数/对数；诱导公式慢讲。M24、M25已排入D15但实际未学。</div>
+      </article>
+      <article class="subject-card">
+        <div class="subject-head"><div class="subject-name">物理</div><div class="subject-score">已学 22 / 31<br>掌握估计约 68%</div></div>
+        <div class="bar"><span style="width:71%;background:#16815f"></span></div>
+        <div class="bar-label"><span>覆盖 71%</span><span>还剩 9 个</span></div>
+        <div class="focus"><strong>当前优先补强</strong>x-t/v-t图像直觉；P21/P22公式选择与多阶段衔接。受力分析、牛顿二/三定律表现较稳。</div>
+      </article>
+      <article class="subject-card">
+        <div class="subject-head"><div class="subject-name">化学</div><div class="subject-score">已学 13 / 34<br>掌握估计约 60%</div></div>
+        <div class="bar"><span style="width:38.2%;background:#b36b00"></span></div>
+        <div class="bar-label"><span>覆盖 38%</span><span>还剩 21 个</span></div>
+        <div class="focus"><strong>当前优先补强</strong>化合价符号与下标、电子得失方向、NaHCO₃/Na₂O₂辨析、铁的价态转化。</div>
+      </article>
+    </section>
+
+    <h2 class="section-title page-break">全部知识点状态</h2>
+    <p class="section-sub">点击筛选。绿色较稳，黄色仍需练，红色应优先补强，紫色是已安排但尚未真正学习。</p>
+    <section class="panel">
+      <div class="filters" role="group" aria-label="知识点筛选">
+        <button type="button" data-filter="all" aria-pressed="true">全部108个</button>
+        <button type="button" data-filter="learned" aria-pressed="false">已有学习记录</button>
+        <button type="button" data-filter="weak" aria-pressed="false">优先补强</button>
+        <button type="button" data-filter="planned" aria-pressed="false">已安排未学</button>
+        <button type="button" data-filter="not-started" aria-pressed="false">后续未学</button>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#16815f"></i>约75%以上</span>
+        <span><i class="dot" style="background:#d18a14"></i>约55%—74%</span>
+        <span><i class="dot" style="background:#c64558"></i>约40%—54%</span>
+        <span><i class="dot" style="background:#7552c7"></i>已安排未学</span>
+        <span><i class="dot" style="background:#a1a8b3"></i>未开始</span>
+      </div>
+      <div id="knowledgeMap"></div>
+    </section>
+
+    <h2 class="section-title page-break">从D1到最后一天的路线</h2>
+    <p class="section-sub">D1—D15为真实安排/反馈复原；D16—D29为主线计划。未来每天还会在同科新课前加入上一日反馈产生的短补桥。</p>
+    <section class="timeline-wrap">
+      <table>
+        <thead><tr><th>天数</th><th>数学</th><th>物理</th><th>化学</th><th>性质</th></tr></thead>
+        <tbody id="timelineBody"></tbody>
+      </table>
+    </section>
+    <div class="notice"><strong>计划修正：</strong>D1—D15实际记录中，M03“充分必要条件”和M04“量词否定”没有被正式安排，因此D16先把这两个历史漏项补上。物理按照现行前置关系，先学P27—P30，再进入P23—P26。</div>
+
+    <p class="footer">掌握百分比是教学决策用的动态估计，不是考试成绩，也不表示孩子被永久贴标签。以后每次独立答对、提示后完成、重复出错或重新学习，都应更新本页。</p>
+  </main>
+
+  <script>
+    const subjects = [
+      {
+        key: 'math', name: '数学', prefix: 'M',
+        titles: ['集合表示与关系','交集/并集/补集','充分必要条件','量词与否定','一元二次函数图像','方程根与系数','二次不等式','函数—方程—不等式联系','基本不等式','函数概念','函数表示与定义域','函数值与值域','单调性与最值','奇偶性','函数图像综合','指数幂','指数函数','对数定义与运算','对数函数','幂函数与零点模型','任意角与弧度','三角函数定义','同角关系与诱导公式','三角函数图像与性质','三角恒等变换','三角模型','向量概念与线性运算','向量坐标表示','数量积','正弦定理','余弦定理与解三角形','复数概念与几何意义','复数四则运算','复数简单方程','空间几何体与体积','点线面关系','平行关系','垂直与基础证明','抽样与频率分布','数据特征','相关性','随机事件与古典概型','独立性与条件概率初步'],
+        scores: {1:55,2:55,5:60,6:60,7:40,8:80,9:60,10:65,11:65,12:65,13:60,14:55,15:55,16:80,17:40,18:40,19:40,20:70,21:60,22:60,23:50},
+        planned: [24,25]
+      },
+      {
+        key: 'physics', name: '物理', prefix: 'P',
+        titles: ['质点/参考系/坐标','位移与路程','速度','加速度','x-t/v-t图像','匀变速规律','运动公式与过程','自由落体','运动实验与数据','研究对象与施力物','重力','弹力','摩擦力','受力图','力的合成与分解','共点力平衡','正交分解','牛顿第一定律','牛顿第二定律与单位','牛顿第三定律','单物体动力学','连接体与斜面','功与功率','动能定理','势能','机械能守恒与功能关系','曲线运动的合成分解','平抛运动','圆周运动与临界','万有引力与卫星','力学实验/图像/误差'],
+        scores: {1:70,2:65,3:60,4:60,5:40,6:60,7:60,8:60,9:55,10:70,11:75,12:60,13:70,14:65,15:80,16:75,17:80,18:80,19:85,20:85,21:65,22:65},
+        planned: []
+      },
+      {
+        key: 'chemistry', name: '化学', prefix: 'C',
+        titles: ['物质分类','分散系与胶体','电解质与电离','离子反应条件','离子方程式拆删查','化合价','氧化还原/电子守恒/配平','钠及其化合物','氯及其化合物','物质的量与摩尔质量','气体摩尔体积与阿伏加德罗','物质的量浓度与配制','铁及其化合物','金属材料','原子结构与核素','元素周期表与周期律','化学键与电子式','位—构—性推断','硫及其化合物','氮及其化合物','无机非金属材料','反应热与能量图','原电池','化学反应速率','可逆反应与限度','甲烷与烷烃','乙烯/加成/加聚','苯','乙醇','乙酸与酯化','基本营养物质','绿色化学','化学实验安全','三重表征与实验图表'],
+        scores: {1:65,2:60,3:50,4:55,5:60,6:50,7:55,8:50,9:60,10:65,11:65,12:80,13:60},
+        planned: []
+      }
+    ];
+
+    const timeline = [
+      ['D1','M01 集合关系','P05 x-t图方向','化学式/催化剂位置','真实反馈复原'],
+      ['D2','M01—M02 集合与交并补','P03—P05 速度/加速度/图像','C01、C06及化学式基础','真实反馈复原'],
+      ['D3','M05—M06 二次函数与根','P04、P06—P07 匀变速','C07及配平/反应类型','真实反馈复原'],
+      ['D4','M01 集合表示','P01—P03 质点/位移/速度','C01 物质分类','真实反馈复原'],
+      ['D5','M10—M12 函数基础','P05—P07 图像与公式','C03—C05 电解质/离子反应','真实反馈复原'],
+      ['D6','M13 单调性与最值','P10—P14 受力图','C06—C07 化合价/氧化还原','真实反馈复原'],
+      ['D7','M05—M06 图像与根','P15—P17 合成/平衡/分解','C04—C05 离子方程式','真实反馈复原'],
+      ['D8','M07—M08 不等式联系','P10—P14 受力图补强','C04—C07 离子/氧化还原','真实反馈复原'],
+      ['D9','M07、M09','P14—P17','C03回测、C08、C09','真实反馈复原'],
+      ['D10','M07、M09回测；M10','P03—P05','C01—C03','正式日包'],
+      ['D11','M10回测；M11—M12','P05回测；P06—P09','C03回测；C04—C05','正式日包'],
+      ['D12','M13—M20','P05、P14—P22','C03—C08','正式日包·含重复'],
+      ['D13','M16—M19','P15—P18','C06—C09','正式学习·含重复'],
+      ['D14','补桥＋M20—M22','P19—P20','补桥＋C10—C11','正式学习'],
+      ['D15','实际M23；M24/M25未学','P21—P22','C12—C13','正式学习'],
+      ['D16｜8/12','M03、M04、M26','P27、P28','C14、C15','未来主线'],
+      ['D17｜8/13','M27—M29','P29、P30','C16、C17','未来主线'],
+      ['D18｜8/14','M30—M32','P23、P24','C18、C19','未来主线'],
+      ['D19｜8/15','M33—M35','P25、P26','C20、C21','未来主线'],
+      ['D20｜8/16','M36—M38','P31＋实验整合','C22、C23','未来主线'],
+      ['D21｜8/17','M39—M41','P27—P30综合','C24、C25','未来主线'],
+      ['D22｜8/18','M42—M43＋统计概率整合','P23—P26综合','C26、C27','未来主线'],
+      ['D23｜8/19','三角/向量/解三角形综合','曲线运动综合','C28、C29','未来主线'],
+      ['D24｜8/20','复数/立体几何综合','机械能综合','C30、C31','未来主线'],
+      ['D25｜8/21','统计概率综合','运动学图像回查','C32、C33','未来主线'],
+      ['D26｜8/22','逻辑/二次函数/不等式综合','受力/牛顿定律综合','C34＋化学实验综合','未来主线'],
+      ['D27｜8/23','真实薄弱点补强','真实薄弱点补强','真实薄弱点补强','动态收口'],
+      ['D28｜8/24','数理化综合诊断','数理化综合诊断','数理化综合诊断','动态收口'],
+      ['D29｜8/25','最终缺口收口','最终缺口收口','最终缺口收口','最终收口']
+    ];
+
+    function scoreClass(score, planned) {
+      if (planned) return 'planned';
+      if (score === undefined) return 'not-started';
+      if (score >= 75) return 'mastered';
+      if (score >= 55) return 'developing';
+      return 'weak';
+    }
+
+    function scoreLabel(score, planned) {
+      if (planned) return '已安排，但尚未真正学习';
+      if (score === undefined) return '未开始';
+      if (score >= 75) return `较稳 · 约${score}%`;
+      if (score >= 55) return `继续巩固 · 约${score}%`;
+      return `优先补强 · 约${score}%`;
+    }
+
+    function renderKnowledge(filter = 'all') {
+      const root = document.getElementById('knowledgeMap');
+      root.innerHTML = '';
+      subjects.forEach(subject => {
+        const block = document.createElement('section');
+        block.className = 'subject-block';
+        const heading = document.createElement('h3');
+        heading.textContent = `${subject.name} · ${subject.titles.length}个`;
+        const grid = document.createElement('div');
+        grid.className = 'node-grid';
+        let visible = 0;
+        subject.titles.forEach((title, idx) => {
+          const n = idx + 1;
+          const score = subject.scores[n];
+          const planned = subject.planned.includes(n);
+          const cls = scoreClass(score, planned);
+          const match = filter === 'all' ||
+            (filter === 'learned' && score !== undefined) ||
+            (filter === 'weak' && score !== undefined && score < 55) ||
+            (filter === 'planned' && planned) ||
+            (filter === 'not-started' && score === undefined && !planned);
+          if (!match) return;
+          visible += 1;
+          const node = document.createElement('article');
+          node.className = `node ${cls}`;
+          node.innerHTML = `<div><div class="code">${subject.prefix}${String(n).padStart(2,'0')}</div><div class="title">${title}</div></div><div class="state">${scoreLabel(score, planned)}</div>`;
+          grid.appendChild(node);
+        });
+        if (visible) {
+          block.appendChild(heading);
+          block.appendChild(grid);
+          root.appendChild(block);
+        }
+      });
+    }
+
+    document.querySelectorAll('[data-filter]').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed','false'));
+        button.setAttribute('aria-pressed','true');
+        renderKnowledge(button.dataset.filter);
+      });
+    });
+
+    const tbody = document.getElementById('timelineBody');
+    timeline.forEach((row, index) => {
+      const tr = document.createElement('tr');
+      tr.className = index < 15 ? 'past' : 'future';
+      row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    renderKnowledge();
+  </script>
+</body>
+</html>
