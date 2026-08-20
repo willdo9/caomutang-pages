@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重庆 → 兴坪 → 深圳 自驾路书</title>
+<style>
+  :root{
+    --bg:#eef1f6; --bg-soft:#f6f8fb; --card:#ffffff; --ink:#14202e; --muted:#526070;
+    --line:#d6dfea; --accent:#1658a8; --accent-2:#c62828; --green:#1f7a44; --gold:#a06a00;
+    --chip:#e9eff7; --shadow:0 2px 10px rgba(20,32,46,.08),0 1px 3px rgba(20,32,46,.05);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(180deg,#e9eef6,var(--bg) 240px);color:var(--ink);line-height:1.68;font-size:16px}
+  .wrap{max-width:840px;margin:0 auto;padding:14px 14px 64px}
+
+  /* ===== header ===== */
+  header{position:relative;overflow:hidden;background:linear-gradient(135deg,#0f2340,#1663b8 130%);
+    color:#fff;border-radius:18px;padding:24px 20px;margin-bottom:18px;
+    box-shadow:var(--shadow)}
+  header::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%)}
+  header h1{margin:0 0 6px;font-size:24px;letter-spacing:.5px;font-weight:800}
+  header .sub{color:#cdd9ea;font-size:14px}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;position:relative;z-index:1}
+  .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:12px;padding:9px 14px;min-width:118px;backdrop-filter:blur(2px)}
+  .stat b{display:block;font-size:16px;color:#fff;font-weight:700}
+  .stat span{color:#c2cfe0;font-size:12.5px}
+
+  /* ===== section titles ===== */
+  h2{font-size:20px;margin:26px 0 14px;padding:10px 0 10px 14px;border-left:6px solid var(--accent);
+    border-radius:4px;background:linear-gradient(90deg,#dce9f7,transparent);
+    font-weight:800;letter-spacing:.3px;color:#0f2c4d}
+  h3{font-size:16.5px;color:var(--accent);margin:20px 0 12px;padding-bottom:6px;
+    border-bottom:2px solid #b9cdea;font-weight:800;display:flex;align-items:center;gap:8px}
+
+  /* ===== cards ===== */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .card.slim{padding:12px 16px}
+
+  /* ===== route overview (纵向路段列表) ===== */
+  .route{position:relative;margin:6px 2px 4px}
+  .route::before{content:"";position:absolute;left:15px;top:8px;bottom:8px;width:3px;
+    background:linear-gradient(180deg,#7ec99b,#2f6db5 50%,#ef9c91);border-radius:2px}
+  .stop{position:relative;padding:0 0 14px 44px}
+  .stop:last-child{padding-bottom:2px}
+  .stop::before{content:"";position:absolute;left:8px;top:8px;width:17px;height:17px;
+    border-radius:50%;background:#fff;border:4px solid var(--accent);z-index:1;
+    box-shadow:0 0 0 3px rgba(47,109,181,.15)}
+  .stop.start::before{border-color:var(--green);box-shadow:0 0 0 3px rgba(31,122,68,.18)}
+  .stop.end::before{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(198,40,40,.18)}
+  .stop-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    padding:10px 14px;box-shadow:0 1px 3px rgba(20,32,46,.06)}
+  .stop.start .stop-head{border-color:#7ec99b;background:#f2fbf5}
+  .stop.end .stop-head{border-color:#ef9c91;background:#fdf1ef}
+  .stop-name{font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+  .stop-name .tag{font-size:11px;font-weight:700;color:#fff;border-radius:6px;padding:1px 7px;letter-spacing:.5px}
+  .stop.start .tag{background:var(--green)}
+  .stop.end .tag{background:var(--accent-2)}
+  .stop .leg{margin-top:6px;font-size:13.5px;color:#47566a;padding-left:4px;line-height:1.55}
+  .stop .leg b{color:var(--ink)}
+  .leg .road{display:inline-block;background:#e7f0fb;border:1px solid #c3d8ef;border-radius:7px;
+    padding:1px 8px;font-size:12.5px;font-weight:700;color:var(--accent);margin-right:5px}
+
+  /* ===== timeline ===== */
+  .tl{position:relative;margin-left:12px;padding-left:26px;border-left:3px solid var(--line)}
+  .ev{position:relative;margin-bottom:22px;padding:12px 14px;border-radius:12px;transition:background .2s}
+  .ev:hover{background:var(--bg-soft)}
+  .ev:last-child{margin-bottom:0}
+  .ev::before{content:"";position:absolute;left:-32px;top:18px;width:15px;height:15px;
+    border-radius:50%;background:#fff;border:4px solid var(--accent);box-shadow:0 0 0 3px rgba(47,109,181,.15)}
+  .ev.green::before{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,139,87,.15)}
+  .ev.blue::before{border-color:var(--accent)}
+  .ev .t{font-weight:800;font-size:16px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .ev .km{display:inline-block;background:var(--chip);border-radius:7px;padding:2px 10px;
+    font-size:12px;color:#3e4d61;font-weight:600;margin-left:2px}
+  .ev .act{margin:6px 0 4px;font-size:15px}
+  .ev .meta{font-size:13.5px;color:var(--muted)}
+  .ev .meta b,.ev .act b{color:var(--ink)}
+
+  /* ===== copy button ===== */
+  .btn{cursor:pointer;border:2px solid #2f6db5;background:#fff;color:var(--accent);
+    border-radius:10px;font-size:13.5px;font-weight:800;padding:6px 13px;margin-left:8px;
+    white-space:nowrap;transition:all .15s;box-shadow:0 2px 4px rgba(22,88,168,.18);min-height:36px}
+  .btn:hover{background:#e8f0fb;border-color:var(--accent);transform:translateY(-1px)}
+  .btn:active{transform:translateY(0);background:#d6e6f8}
+  .btn.ok{background:#e2f4ea;border-color:var(--green);color:var(--green)}
+
+  /* ===== notes / warnings ===== */
+  .warn,.gw,.danger{border-radius:12px;padding:12px 16px;font-size:13.8px;margin:10px 0;line-height:1.7}
+  .warn{background:#fff8ec;border:1px solid #f0ddb0;color:#7a5a18}
+  .gw{background:#eef7f1;border:1px solid #c4e3cf;color:#1f5e3a}
+  .danger{background:#fdf0ef;border:1px solid #f0beb6;color:#9b2c1f}
+  .warn b,.gw b,.danger b{color:inherit}
+  code{background:var(--chip);padding:2px 7px;border-radius:6px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;color:#4a5a6e}
+
+  /* ===== table ===== */
+  table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--chip);font-weight:700;color:#33465c}
+  td:first-child,th:first-child{border-left:none;border-top:none;border-bottom:none}
+  tr:last-child td{border-bottom:none}
+  td:last-child,th:last-child{border-right:none}
+  tbody tr:nth-child(even){background:var(--bg-soft)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  /* ===== list ===== */
+  .list{font-size:14.2px;padding-left:0;list-style:none;margin:4px 0}
+  .list li{margin:10px 0;padding-left:2px}
+  .list li b{color:#33465c}
+
+  /* ===== legend & footer ===== */
+  .legend{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:12.8px;color:var(--muted)}
+  .legend .btn{margin-left:0}
+  .foot{color:var(--muted);font-size:12px;text-align:center;margin-top:30px;letter-spacing:.3px}
+
+  /* ===== mobile ===== */
+  @media (max-width:640px){
+    body{font-size:16px}
+    .wrap{padding:12px 10px 56px}
+    header{padding:20px 16px;border-radius:16px}
+    header h1{font-size:21px;line-height:1.3}
+    .stats{gap:8px}
+    .stat{min-width:calc(50% - 8px);padding:9px 12px}
+    h2{font-size:18px;padding:9px 0 9px 12px}
+    .card{padding:14px 12px;border-radius:14px}
+    /* route 路段列表移动端 */
+    .route::before{left:13px}
+    .stop{padding-left:38px}
+    .stop::before{left:7px}
+    .stop-head{padding:11px 12px}
+    .stop-name{font-size:15px}
+    /* timeline */
+    .tl{margin-left:8px;padding-left:18px}
+    .ev{padding:11px 12px;margin-bottom:18px}
+    .ev::before{left:-26px;width:14px;height:14px}
+    .ev .t{font-size:15.5px}
+    /* copy 按钮触控加大 */
+    .btn{padding:8px 15px;font-size:14px;min-height:44px;border-radius:11px;margin-left:0;margin-top:4px}
+    .ev .meta .btn{margin-left:0}
+    .act b,.meta b{display:inline}
+    /* 表格横滚 */
+    .table-scroll{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:-2px}
+    table{min-width:540px;font-size:13px}
+    .legend{align-items:flex-start;flex-direction:column;gap:8px}
+  }
+</style>
+<meta property="og:title" content="重庆 → 兴坪 → 深圳 自驾路书">
+<meta property="og:description" content="2 天 · 漓江晨雾 + 部分国道 · 3 人（2 大 1 小）">
+<meta property="og:image" content="https://willdo9.github.io/caomutang-pages/chongqing-shenzhen-roadtrip-og.jpg">
+<meta property="og:type" content="website">
+<meta name="description" content="2 天 · 漓江晨雾 + 部分国道 · 3 人（2 大 1 小）">
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>重庆 → 兴坪古镇 → 深圳　自驾路书</h1>
+  <div class="sub">2 天 · 漓江晨雾 + 部分国道 · 3 人（2 大 1 小）</div>
+  <div class="stats">
+    <div class="stat"><b>9:00</b><span>重庆出发 · Day1 8/21 周五</span></div>
+    <div class="stat"><b>约 1400 km</b><span>总里程</span></div>
+    <div class="stat"><b>2 天</b><span>Day1 兴坪 / Day2 深圳</span></div>
+    <div class="stat"><b>周六到</b><span>8/22 深圳不限行</span></div>
+  </div>
+</header>
+
+<h2>① 路线总览</h2>
+<div class="card">
+  <div class="route">
+    <div class="stop start">
+      <div class="stop-head">
+        <span class="stop-name"><span class="tag">起点</span>重庆主城</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'重庆主城 巴南界石互通')">⧉ 复制</button>
+      </div>
+      <div class="leg"><span class="road">G65 包茂高速</span>约 750 km · 9 小时，隧道群多</div>
+    </div>
+    <div class="stop">
+      <div class="stop-head">
+        <span class="stop-name">阳朔高田互通</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'阳朔高田互通')">⧉ 复制</button>
+      </div>
+      <div class="leg"><span class="road">G321 国道</span>漓江景观大道 · 约 40 km · 40 分钟（看山水这段）</div>
+    </div>
+    <div class="stop end">
+      <div class="stop-head">
+        <span class="stop-name"><span class="tag">中宿</span>兴坪古镇</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'兴坪古镇')">⧉ 复制</button>
+      </div>
+      <div class="leg"><span class="road">G321 折返</span>→ G65 → G78 汕昆，回阳朔高田上高速 · 约 150 km · 2h</div>
+    </div>
+    <div class="stop">
+      <div class="stop-head">
+        <span class="stop-name">贺州互通</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'贺州互通')">⧉ 复制</button>
+      </div>
+      <div class="leg"><span class="road">G323 → G107 国道</span>省钱免费 · 约 296 km · 5h（雨天改 <b>G55 二广高速</b>）</div>
+    </div>
+    <div class="stop">
+      <div class="stop-head">
+        <span class="stop-name">清远 广清大道</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'清远 广清大道')">⧉ 复制</button>
+      </div>
+      <div class="leg"><span class="road">广清高速</span>→ 广州绕城 → 沿江高速 · 约 120 km · 1.5h</div>
+    </div>
+    <div class="stop end">
+      <div class="stop-head">
+        <span class="stop-name"><span class="tag">终点</span>深圳 南头收费站</span>
+        <button class="btn" data-label="⧉" onclick="copyText(this,'深圳 南头收费站')">⧉ 复制</button>
+      </div>
+      <div class="leg">周六到达，深圳外地牌不限行</div>
+    </div>
+  </div>
+  <div class="legend">🔘 点每个「⧉ 复制」按钮，对应地点名已复制，直接粘进高德导航「添加途经点」。</div>
+  <div class="gw">🛣️ <b>两段"不走高速"要分清：</b><br>
+  ① <b>看风景的不走高速</b>：<code>阳朔高田互通 ↔ 兴坪古镇</code> 走 <b>G321 国道（漓江景观大道）</b>，约 38–40 km / 40 分钟，沿漓江喀斯特峰林，是真正看山水的那段。<br>
+  ② <b>省钱的不走高速</b>：<code>贺州互通 → 清远</code> 走 <b>G323 → G107 国道</b>，全程免费、平行二广/广贺高速，约 296 km / 5 小时（但穿城镇、风景一般）。遇暴雨/雷雨大风改走 <b>二广高速 G55</b>（更安全，多花过路费）。</div>
+</div>
+
+<!-- ============ DAY 1 ============ -->
+<h2>② Day 1（8/21 周五）　重庆 → 兴坪古镇　约 790 km</h2>
+<div class="card">
+  <div class="warn">🚗 本日「中间不停」：不进服务区饭店，仅做必要加油/如厕短停，干粮车上吃。带娃建议每 2.5–3 小时进服务区松筋骨（算"必要短停"，不算绕路）。</div>
+  <div class="tl">
+    <div class="ev blue">
+      <div class="t">09:00　重庆出发 <span class="km">0 km</span></div>
+      <div class="act">主城上 <b>G65 包茂高速</b>（渝湘复线）。出发前加满油。</div>
+      <div class="meta">起点：重庆主城 巴南界石互通 </div>
+    </div>
+    <div class="ev">
+      <div class="t">途经（不停车） <span class="km">重庆→阳朔高田 ≈ 750 km</span></div>
+      <div class="act">依次过：<b>酉阳互通</b>  · <b>秀山互通</b>  · <b>怀化南/池回互通</b>  · <b>通道互通</b>  · <b>三江北互通</b> </div>
+      <div class="meta">隧道群多（雪峰山隧道等），白天开视野好；遇阵雨弯道控速。</div>
+    </div>
+    <div class="ev">
+      <div class="t">约 18:00　到阳朔高田互通下高速 <span class="km">高速 ≈ 750 km / 9h</span></div>
+      <div class="act">下 <b>阳朔高田互通</b> ，转 <b>G321 国道</b> 往兴坪（沿漓江景观大道，约 40 分钟）。</div>
+    </div>
+    <div class="ev green">
+      <div class="t">约 18:40　抵达兴坪古镇入住 <span class="km">G321 38–40 km / 40 min</span></div>
+      <div class="act">终点 <b>兴坪古镇</b> 。停好车逛古镇、吃啤酒鱼。</div>
+      <div class="meta">住宿：江景家庭房（8 月旺季周末涨价 30~50%，今晚就订，选带免费停车的）。</div>
+    </div>
+  </div>
+  <div class="warn">⚠️ 9:00 出发约 18:40 到，天将黑。兴坪镇内停车位有限，导航搜「兴坪古镇停车场 / 20 元人民币风景区」。</div>
+</div>
+
+<!-- ============ DAY 2 ============ -->
+<h2>③ Day 2（8/22 周六）　兴坪古镇 → 深圳　约 600 km</h2>
+<div class="card">
+  <div class="warn">🌦️ <b>Day2 两套行程，按当天天气二选一：</b><br>
+  • <b>【A 国道省钱版】</b>——不下雨 / 小到中雨：贺州→清远走 <b>G323/G107 国道</b>（免费，省过路费，慢约 2 小时）。<br>
+  • <b>【B 高速稳妥版】</b>——预报<b>暴雨 / 雷雨大风</b>：贺州→清远全程走 <b>二广高速 G55</b>（快约 2 小时、更安全）。<br>
+  两套从兴坪出发到贺州完全一致，区别只在贺州之后。出发前看「广东天气」实时预警决定。</div>
+
+  <h3>🧭 A. 不下雨版 · 贺州→清远走国道（省钱）</h3>
+  <div class="tl">
+    <div class="ev green">
+      <div class="t">06:30–08:00　兴坪清晨（免费）</div>
+      <div class="act">看 <b>漓江晨雾</b>、20 元背景图（黄布倒影）、老寨山。娃起不来可睡到 8:30。</div>
+      <div class="meta">起点：兴坪古镇 </div>
+    </div>
+    <div class="ev blue">
+      <div class="t">09:00　兴坪出发，折返阳朔高田上高速 <span class="km">G321 折返 38–40 km / 40 min</span></div>
+      <div class="act">走 <b>G321</b> 原路返回 <b>阳朔高田互通</b> （就是昨天那段看风景的漓江国道，往返都要走），上 G65 包茂 → 转 <b>G78 汕昆</b> 到 <b>贺州互通</b> 。</div>
+      <div class="meta">💡 Day2 要从兴坪沿 G321 折返约 40 分钟回阳朔高田上高速，无法避免（兴坪附近无其他高速入口）。</div>
+    </div>
+    <div class="ev blue">
+      <div class="t">约 11:00　贺州下高速，进国道 <span class="km">阳朔高田→贺州 ≈ 150 km / 2h</span></div>
+      <div class="act"><b>贺州互通</b> 下，走 <b>G323 国道</b>（贺州大道→八达东路→瑞临线）→ 鹰扬关入广东 → 转 <b>G107 国道</b> 直抵 <b>清远</b>。</div>
+      <div class="meta">🛣️ <b>省钱不走高速段：贺州→清远 G323/G107，全程免费，约 296 km / 5 小时，平行二广高速。</b></div>
+    </div>
+    <div class="ev">
+      <div class="t">约 12:30　国道旁午饭 <span class="km">国道段已过约 1/3</span></div>
+      <div class="act">连州/阳山段下国道找农庄（走地鸡、河鲜），比服务区便宜地道。</div>
+    </div>
+    <div class="ev blue">
+      <div class="t">约 16:30　清远上高速 <span class="km">贺州→清远 ≈ 296 km / 5h（国道）</span></div>
+      <div class="act"><b>清远（广清大道）</b>  上 <b>广清高速 → 广州绕城 → 沿江高速</b>，避开广深高速拥堵段。</div>
+    </div>
+    <div class="ev green">
+      <div class="t">约 18:00　抵达深圳 <span class="km">清远→深圳 ≈ 120 km / 1.5h</span></div>
+      <div class="act">终点 <b>深圳（南头/福田收费站）</b> 。</div>
+      <div class="meta">✅ Day2 是 <b>周六，深圳外地牌不限行</b>，全天可进。</div>
+    </div>
+  </div>
+
+  <h3>🛡️ B. 下雨版 · 贺州→清远全程高速（稳妥）</h3>
+  <div class="tl">
+    <div class="ev green">
+      <div class="t">06:30–08:00　兴坪清晨（免费）</div>
+      <div class="act">看 <b>漓江晨雾</b>、20 元背景图。若已雨大可略过，直接出发。</div>
+      <div class="meta">起点：兴坪古镇 </div>
+    </div>
+    <div class="ev blue">
+      <div class="t">09:00　兴坪出发，折返阳朔高田上高速 <span class="km">G321 折返 38–40 km / 40 min</span></div>
+      <div class="act">走 <b>G321</b> 返回 <b>阳朔高田互通</b> ，上 G65 包茂 → 转 <b>G78 汕昆</b> 到 <b>贺州互通</b> 。</div>
+      <div class="meta">💡 同样需折返约 40 分钟回阳朔高田上高速。</div>
+    </div>
+    <div class="ev blue">
+      <div class="t">约 11:00　贺州不下高速，继续走二广 G55 <span class="km">阳朔高田→贺州 ≈ 150 km / 2h</span></div>
+      <div class="act"><b>贺州互通</b> 不出去，直接转 <b>二广高速 G55</b> 往广州方向，经连州、怀集、广宁、四会 → 广州绕城 → <b>沿江高速</b> 进深圳。</div>
+      <div class="meta">🛣️ <b>雨天版：贺州→清远全程高速（G55 二广），约 280 km / 3 小时，比国道快约 2 小时、更安全。</b></div>
+    </div>
+    <div class="ev">
+      <div class="t">约 12:30　高速服务区午饭 <span class="km">二广高速段</span></div>
+      <div class="act">服务区简餐（贵一点但方便），雨天国道风险高，这段多花过路费换安全。</div>
+    </div>
+    <div class="ev blue">
+      <div class="t">约 14:00　过清远，继续高速进深圳 <span class="km">贺州→清远 ≈ 280 km / 3h</span></div>
+      <div class="act">经 <b>广清高速 → 广州绕城 → 沿江高速</b>。<b>清远 广清大道</b>  可作途经点参考。</div>
+    </div>
+    <div class="ev green">
+      <div class="t">约 15:30　抵达深圳 <span class="km">清远→深圳 ≈ 120 km / 1.5h</span></div>
+      <div class="act">终点 <b>深圳（南头/福田收费站）</b> 。</div>
+      <div class="meta">✅ 周六，深圳外地牌不限行。雨天版比国道版早到约 2.5 小时。</div>
+    </div>
+  </div>
+  <div class="danger">🌀 <b>大背景：</b>南海热带低压（或台风"紫檀"）影响华南，广东 8/21–26 多暴雨、雷雨大风；广西桂东 8/21 有中雨局地暴雨。<b>整条线都在雨区，雨具随身、关注实时预警；贺州之后若预报暴雨/雷雨大风，直接走 B 高速版。</b></div>
+</div>
+
+<!-- ============ 天气 ============ -->
+<h2>④ 行程天气（8/21–8/22）</h2>
+<div class="card">
+  <div class="table-scroll"><table>
+    <tr><th>日期</th><th>城市 / 路段</th><th>天气</th><th>气温</th><th>行车提示</th></tr>
+    <tr><td>8/21</td><td>重庆出发</td><td>多云，部分雷阵雨</td><td>26–33℃</td><td>出城避开阵雨时段，山区隧道控速</td></tr>
+    <tr><td>8/21</td><td>湘西—桂北（酉阳→桂林）</td><td>多云有阵雨</td><td>24–34℃</td><td>隧道群+雨，保持车距</td></tr>
+    <tr><td>8/21</td><td>兴坪 / 阳朔（到达）</td><td>多云有分散阵雨</td><td>25–34℃</td><td>傍晚可能阵雨，早订房</td></tr>
+    <tr><td>8/22</td><td>兴坪清晨</td><td>多云有分散阵雨</td><td>25–34℃</td><td>晨雾可能，慢行看景</td></tr>
+    <tr><td>8/22</td><td>贺州 → 清远（国道段）</td><td>中雷雨/局部暴雨+雷雨大风</td><td>26–35℃</td><td>⚠️ 暴雨改走二广高速</td></tr>
+    <tr><td>8/22</td><td>深圳（到达）</td><td>中雨转小雨，局地暴雨</td><td>28–33℃</td><td>周末不限行，减速防积水</td></tr>
+  </table></div>
+  <div class="danger">🌀 <b>大背景：</b>华南本周受热带低压/台风"紫檀"影响，广东多暴雨雷雨大风，广西桂东有中雨局地暴雨。整条线都在雨区，<b>雨具随身、关注实时预警、山路国道遇强降雨果断上高速</b>。</div>
+  <div class="meta" style="margin-top:6px;font-size:12px;color:var(--muted)">预报随时间更新，出发前 1 天再核对「中国天气网 / 广东天气 / 广西天气」。</div>
+</div>
+
+<!-- ============ 注意事项 ============ -->
+<h2>⑤ 注意事项 & 参考建议</h2>
+<div class="card">
+  <ul class="list">
+    <li><b>⏰ 出发时间：</b>Day1 严格 9:00 前上高速避早高峰；Day2 兴坪 9:00 前走，才能尽早到深圳。</li>
+    <li><b>🚫 深圳限行：</b>本次 Day2 是 <b>周六，不限行</b>。若改到工作日走，注意 7:00–9:00、17:30–19:30 限行（可申请每月 1 次免限行）。</li>
+    <li><b>🛣️ 两段不走高速：</b>看风景=阳朔高田↔兴坪 G321（漓江）；省钱=贺州→清远 G323/G107（雨天改二广 G55 高速）。</li>
+    <li><b>🔁 Day2 折返：</b>兴坪无就近高速口，需沿 G321 折返约 40 分钟回阳朔高田上 G65，无法省掉。</li>
+    <li><b>🏨 兴坪住宿：</b>8 月旺季，江景家庭房周末涨 30–50%，今晚订「兴坪古镇 / 20 元背景图」附近、带免费停车的民宿。</li>
+    <li><b>⛽ 加油：</b>重庆加满油；Day1 中途服务区补一次，湖南/广东油价相近，不用专程下高速找油。</li>
+    <li><b>🌧️ 天气：</b>华南本周暴雨雷雨大风频繁，雨具随身；山路/国道遇强降雨上高速，关注实时预警。</li>
+    <li><b>🧒 带娃：</b>兴坪清晨晨雾免费、古镇平坦好逛；车上备水、零食、晕车药。</li>
+    <li><b>🧭 导航：</b>每个 ⧉ 按钮复制对应地点名，逐条粘进高德「添加途经点」即可。</li>
+  </ul>
+</div>
+
+<div class="foot">路书生成于 2026-08-20 · 里程/时间为参考估算，以实际导航与当日预报为准</div>
+
+</div>
+
+<script>
+function copyText(btn, text){
+  var label = btn.dataset.label || '⧉';
+  function done(){
+    btn.textContent = '已复制 ✓';
+    btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent = label; btn.classList.remove('ok'); }, 1100);
+  }
+  function execCopy(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ ta.setSelectionRange(0, text.length); }catch(e){}
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  // 同步 execCommand 优先：在用户点击手势内执行，兼容 file:// / 客户端 webview 等非安全上下文
+  if(execCopy()){ done(); return; }
+  // 回退：异步 clipboard API
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(done);
+  } else {
+    done();
+  }
+}
+</script>
+</body>
+</html>
